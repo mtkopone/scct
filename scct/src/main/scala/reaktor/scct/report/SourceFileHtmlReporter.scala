@@ -1,6 +1,6 @@
 package reaktor.scct.report
 
-import xml.{Unparsed, NodeSeq, Text}
+import xml.{Unparsed, Node, NodeSeq, Text}
 import reaktor.scct.{Env, ClassTypes, Name, CoveredBlock}
 
 object SourceFileHtmlReporter {
@@ -31,7 +31,7 @@ class SourceFileHtmlReporter(sourceFile: String, data: CoverageData, sourceLoade
       case idx => {
         val pkgName = name.substring(0, idx+1)
         val fileName = name.substring(idx+1)
-        val packages = pkgName.split("/").foldLeft(NodeSeq.Empty) { (nodes, curr) => nodes ++ zeroSpace ++ Text(curr+"/") }
+        val packages = pkgName.split("/").foldLeft[NodeSeq](NodeSeq.Empty) { (nodes, curr) => nodes ++ zeroSpace ++ Text(curr+"/") }
         packages ++ <span class="header">{ zeroSpace ++ Text(fileName) }</span>
       }
     }

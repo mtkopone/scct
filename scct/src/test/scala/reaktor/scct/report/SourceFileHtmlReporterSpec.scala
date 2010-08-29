@@ -34,8 +34,8 @@ class SourceFileHtmlReporterSpec extends Specification with XmlMatchers {
     val sut = new SourceFileHtmlReporter("src", new CoverageData(Nil), new SourceLoader(env), env)
 
     "strip base dir and split package and filename." in {
-      sut.sourceFileHeader("//my/source/dir/package/and/Source.scala") mustEqual
-        sut.zeroSpace ++ Text("package/") ++ sut.zeroSpace ++ Text("and/") ++ <span class="header">{ sut.zeroSpace ++ Text("Source.scala") }</span>
+      sut.sourceFileHeader("//my/source/dir/package/and/Source.scala").toString mustEqual
+        (sut.zeroSpace ++ Text("package/") ++ sut.zeroSpace ++ Text("and/") ++ <span class="header">{ sut.zeroSpace ++ Text("Source.scala") }</span>).toString
     }
   }
 
