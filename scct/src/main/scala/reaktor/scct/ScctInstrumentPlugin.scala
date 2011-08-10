@@ -183,7 +183,6 @@ class ScctTransformComponent(val global: Global) extends PluginComponent with Ty
 
     private def coverageCall(tree: Tree) = {
       val id = newId
-      println("MMMMMMMMMM instrumenting: " + currentOwner)
       data = CoveredBlock(id, createName(currentOwner, tree), minOffset(tree), false) :: data
       fitIntoTree(tree, rawCoverageCall(id))
     }
