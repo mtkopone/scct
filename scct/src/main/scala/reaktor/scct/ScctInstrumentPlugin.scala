@@ -10,7 +10,7 @@ class ScctInstrumentPlugin(val global: Global) extends Plugin {
   val name = "scct"
   val description = "Scala code coverage instrumentation plugin."
   val runsAfter = List("refchecks")
-  val components = List(new ScctTransformComponent(global))
+  val components = if (global.settings.outdir.value.endsWith("test-classes")) List() else List(new ScctTransformComponent(global))
 }
 
 class ScctTransformComponent(val global: Global) extends PluginComponent with TypingTransformers with Transform {
@@ -183,6 +183,7 @@ class ScctTransformComponent(val global: Global) extends PluginComponent with Ty
 
     private def coverageCall(tree: Tree) = {
       val id = newId
+      println("MMMMMMMMMM instrumenting: " + currentOwner)
       data = CoveredBlock(id, createName(currentOwner, tree), minOffset(tree), false) :: data
       fitIntoTree(tree, rawCoverageCall(id))
     }
