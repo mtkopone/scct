@@ -100,10 +100,8 @@ trait InstrumentationSupport {
   def jarPathOfClass(className: String) = {
     val resource = className.split('.').mkString("/", "/", ".class")
     val path = getClass.getResource(resource).getPath
-    println("path " + path)
-    val indexOfFile = path.indexOf("file:")
     val indexOfSeparator = path.lastIndexOf('!')
-    path.substring(indexOfFile, indexOfSeparator).replace("file:","")
+    path.substring(0,indexOfSeparator).replace("file:","")
   }
 
   def compile(line: String): PluginRunner = {
