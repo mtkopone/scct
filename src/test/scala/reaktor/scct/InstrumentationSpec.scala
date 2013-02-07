@@ -79,22 +79,7 @@ trait InstrumentationSupport {
   }
 
   def locateScalaJars() = {
-    val scalaJars = List("scala-compiler.jar", "scala-library.jar")
-    val userHome = System.getProperty("user.home")
-    if (new File(System.getProperty("user.home") + "/.sbt/boot/scala-"+scalaVersion+"/lib/"+ scalaJars.head).exists) {
-      // sbt 0.11+ with global boot dirs
-      scalaJars.map(userHome + "/.sbt/boot/scala-"+scalaVersion+"/lib/"+_)
-    } else if (new File("./project/boot/scala-"+scalaVersion+"/lib/" + scalaJars.head).exists) {
-      // sbt 0.7.7 and such, project-specific boot dirs
-      scalaJars.map("./project/boot/scala-"+scalaVersion+"/lib/"+_)
-    } else if (new File("./scct/project/boot/scala-"+scalaVersion+"/lib/" + scalaJars.head).exists) {
-      // Probably IDEA with project dir instead of module dir as working dir
-      scalaJars.map("./scct/project/boot/scala-"+scalaVersion+"/lib/"+_)
-    } else {
-      //Magic
-      //throw new FileNotFoundException("scala jars not found. Check InstrumentationSpec:locateScalaJars: " + f.getPath)
-      List(jarPathOfClass("scala.Some"),jarPathOfClass("scala.tools.nsc.Interpreter") )
-    }
+    List(jarPathOfClass("scala.Some"),jarPathOfClass("scala.tools.nsc.Interpreter") )
   }
   
   def jarPathOfClass(className: String) = {
