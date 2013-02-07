@@ -61,7 +61,7 @@ trait InstrumentationSupport {
 
   def locateCompiledClasses() = {
     val scalaTargetDir = scalaVersion match {
-      case "2.10.0-RC3" => "2.10"
+      case version if version.startsWith("2.10.0") => "2.10"
       case x => x
     }
     val first = new File("./target/scala-"+scalaTargetDir+"/classes")
@@ -91,8 +91,19 @@ trait InstrumentationSupport {
       // Probably IDEA with project dir instead of module dir as working dir
       scalaJars.map("./scct/project/boot/scala-"+scalaVersion+"/lib/"+_)
     } else {
-      throw new FileNotFoundException("scala jars not found. Check InstrumentationSpec:locateScalaJars")
+      //Magic
+      //throw new FileNotFoundException("scala jars not found. Check InstrumentationSpec:locateScalaJars: " + f.getPath)
+      List(jarPathOfClass("scala.Some"),jarPathOfClass("scala.tools.nsc.Interpreter") )
     }
+  }
+  
+  def jarPathOfClass(className: String) = {
+    val resource = className.split('.').mkString("/", "/", ".class")
+    val path = getClass.getResource(resource).getPath
+    println("path " + path)
+    val indexOfFile = path.indexOf("file:")
+    val indexOfSeparator = path.lastIndexOf('!')
+    path.substring(indexOfFile, indexOfSeparator).replace("file:","")
   }
 
   def compile(line: String): PluginRunner = {
