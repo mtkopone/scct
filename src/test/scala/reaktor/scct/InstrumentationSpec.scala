@@ -31,7 +31,7 @@ trait InstrumentationSpec extends Specification with InstrumentationSupport {
 }
 
 trait InstrumentationSupport {
-  def scalaVersion = System.getProperty("scct-test-scala-version", "2.10.0-RC3")
+  def scalaVersion = System.getProperty("scct-test-scala-version", "2.10.1")
   def debug = false
 
   def compileFile(file: String) = compileFiles(Seq(file) :_*)
@@ -60,10 +60,7 @@ trait InstrumentationSupport {
   }
 
   def locateCompiledClasses() = {
-    val scalaTargetDir = scalaVersion match {
-      case "2.10.0-RC3" => "2.10"
-      case x => x
-    }
+    val scalaTargetDir = if (scalaVersion startsWith "2.10.") "2.10" else scalaVersion
     val first = new File("./target/scala-"+scalaTargetDir+"/classes")
     val second = new File("./scct/target/scala-"+scalaTargetDir+"/classes")
     if (first.exists) {
@@ -80,8 +77,14 @@ trait InstrumentationSupport {
 
   def locateScalaJars() = {
     val scalaJars = List("scala-compiler.jar", "scala-library.jar")
-    val userHome = System.getProperty("user.home")
-    if (new File(System.getProperty("user.home") + "/.sbt/boot/scala-"+scalaVersion+"/lib/"+ scalaJars.head).exists) {
+    val userHome  = System.getProperty("user.home")
+    val ivyBase   = s"$userHome/.ivy2/cache/org.scala-lang"
+
+    def ivyJar(what: String, ver: String) = new File(s"$ivyBase/scala-$what/jars/scala-$what-$ver.jar")
+
+    if (ivyJar("library", scalaVersion).exists)
+      List("library", "compiler", "reflect").map(ivyJar(_, scalaVersion))
+    else if (new File(System.getProperty("user.home") + "/.sbt/boot/scala-"+scalaVersion+"/lib/"+ scalaJars.head).exists) {
       // sbt 0.11+ with global boot dirs
       scalaJars.map(userHome + "/.sbt/boot/scala-"+scalaVersion+"/lib/"+_)
     } else if (new File("./project/boot/scala-"+scalaVersion+"/lib/" + scalaJars.head).exists) {
