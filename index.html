@@ -101,6 +101,14 @@ object MyBuild extends Build {
         <p>This creates individual coverage reports into <span class="mono">$childProjectDir/target/scala_&lt;ver&gt;/coverage-report/</span></p>
         <p>Merge all the existing child reports into <span class="mono">$parentProjectDir/target/scala_&lt;ver&gt;/coverage-report/</span> with:</p>
         <pre>$ sbt scct-merge-report</pre>
+        
+        <h3>Test filtering</h3>
+        Run coverage report with only tests in a given package: 
+        <pre>sbt scct-test:test-only my.packge.*</pre>
+        
+        Run coverage report with only tests with a given class name: 
+        <pre>sbt scct-test:test-only *MyTest</pre>
+        
         <h3>...Enjoy</h3>
 
       </div>
