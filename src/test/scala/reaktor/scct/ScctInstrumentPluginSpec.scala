@@ -30,9 +30,10 @@ class ScctInstrumentPluginSpec extends Specification with Mockito {
       sut.options.baseDir.getName must not be empty
     }
     "be settable" in {
-      sut.processOptions(List("basedir:/base/dir", "projectId:myProject"), s => ())
+      sut.processOptions(List("basedir:/base/dir", "projectId:myProject", "excludePackages:myRegex,yourRegex"), s => ())
       sut.options.projectId mustEqual "myProject"
       sut.options.baseDir.getAbsolutePath mustEqual "/base/dir"
+      sut.options.excludePackages mustEqual Array("myRegex".r, "yourRegex".r)
     }
     "report error" in {
       var err = ""
