@@ -63,7 +63,7 @@ object Coverage {
   }
 
   private def filteredData: List[CoveredBlock] = {
-    val excludedPaths = System.getProperty("scct.exclude.paths", "").split(",").filter(_.length > 0).map(_.r)
+    val excludedPaths = System.getProperty("scct.excluded.paths.regex", "").split(",").filter(_.length > 0).map(_.r)
     val filter = new CoverageFilter(excludedPaths)
     filter.filter(dataValues)
   }
