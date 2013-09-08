@@ -53,11 +53,19 @@ object Coverage {
   }
 
   def report = {
-    val projectData = new ProjectData(env, dataValues)
+    val filtered: List[CoveredBlock] = filteredData
+
+    val projectData = new ProjectData(env, filtered)
     val writer = new HtmlReportWriter(env.reportDir)
     new HtmlReporter(projectData, writer).report
     new CoberturaReporter(projectData, writer).report
     BinaryReporter.report(projectData, env.reportDir)
+  }
+
+  private def filteredData: List[CoveredBlock] = {
+    val excludedPaths = System.getProperty("scct.excluded.paths.regex", "").split(",").filter(_.length > 0).map(_.r)
+    val filter = new CoverageFilter(excludedPaths)
+    filter.filter(dataValues)
   }
 
   private def setupShutdownHook {
