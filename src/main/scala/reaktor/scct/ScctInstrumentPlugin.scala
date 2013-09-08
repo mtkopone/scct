@@ -4,7 +4,7 @@ import tools.nsc.plugins.{PluginComponent, Plugin}
 import java.io.File
 import tools.nsc.transform.{Transform, TypingTransformers}
 import tools.nsc.symtab.Flags
-import tools.nsc.{Phase, Global}
+import tools.nsc.Global
 import util.Random
 
 class ScctInstrumentPlugin(val global: Global) extends Plugin {
@@ -25,8 +25,8 @@ class ScctInstrumentPlugin(val global: Global) extends Plugin {
     }
   }
   override val optionsHelp: Option[String] = Some(
-    "  -P:scct:projectId:<name>          identify compiled classes under project <name>\n" +
-    "  -P:scct:basedir:<dir>             set the root dir of the project being compiled"
+    "  -P:scct:projectId:<name>                 identify compiled classes under project <name>\n" +
+    "  -P:scct:basedir:<dir>                    set the root dir of the project being compiled\n"
   )
 }
 
@@ -45,7 +45,6 @@ object ScctInstrumentPluginOptions {
 
 class ScctTransformComponent(val global: Global, val opts:ScctInstrumentPluginOptions) extends PluginComponent with TypingTransformers with Transform {
   import global._
-  import global.definitions._
 
   val runsAfter = List[String]("typer")
   override val runsBefore = List[String]("patmat")

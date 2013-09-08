@@ -3,7 +3,6 @@ package reaktor.scct
 import org.specs2.mutable._
 import org.specs2.mock._
 import tools.nsc.Global
-import java.io.File
 
 class ScctInstrumentPluginSpec extends Specification with Mockito {
   val sut = new ScctInstrumentPlugin(smartMock[Global])
