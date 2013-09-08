@@ -6,6 +6,7 @@ import tools.nsc.transform.{Transform, TypingTransformers}
 import tools.nsc.symtab.Flags
 import tools.nsc.Global
 import util.Random
+import scala.util.matching.Regex
 
 class ScctInstrumentPlugin(val global: Global) extends Plugin {
   val name = "scct"
@@ -19,6 +20,8 @@ class ScctInstrumentPlugin(val global: Global) extends Plugin {
         options.projectId = opt.substring("projectId:".length)
       } else if (opt.startsWith("basedir:")) {
         options.baseDir = new File(opt.substring("basedir:".length))
+      } else if (opt.startsWith("excludePackages:")) {
+        options.excludePackages  = opt.substring("excludePackages:".length).split(",").filter(_.length > 0).map(_.r)
       } else {
         error("Unknown option: "+opt)
       }
@@ -30,7 +33,7 @@ class ScctInstrumentPlugin(val global: Global) extends Plugin {
   )
 }
 
-class ScctInstrumentPluginOptions(val compilationId:String, var projectId:String, var baseDir:File) {
+class ScctInstrumentPluginOptions(val compilationId:String, var projectId:String, var baseDir:File, var excludePackages: Array[Regex] = Array()) {
   def this() = this(System.currentTimeMillis.toString + Random.nextLong().toString, ScctInstrumentPluginOptions.defaultProjectName, ScctInstrumentPluginOptions.defaultBasedir)
 }
 
@@ -52,6 +55,8 @@ class ScctTransformComponent(val global: Global, val opts:ScctInstrumentPluginOp
   val phaseName = "scctInstrumentation"
   def newTransformer(unit: CompilationUnit) = new Instrumenter(unit)
 
+  val filter = new CoverageFilter(opts.excludePackages)
+
   var debug = System.getProperty("scct.debug") == "true"
   var saveData = true
   var counter = 0
@@ -69,11 +74,15 @@ class ScctTransformComponent(val global: Global, val opts:ScctInstrumentPluginOp
       super.run
       saveMetadata
     }
+
+
     private def saveMetadata {
       if (saveData) {
+        val filtered = filter.filter(data)
+
         println("scct: [" + opts.projectId + "] Saving coverage data.")
         if (coverageFile.exists) coverageFile.delete
-        MetadataPickler.toFile(data, coverageFile)
+        MetadataPickler.toFile(filtered, coverageFile)
       }
     }
   }
