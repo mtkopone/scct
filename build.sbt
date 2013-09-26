@@ -16,7 +16,7 @@ libraryDependencies <+= (scalaVersion) { v =>
 
 libraryDependencies ++= Seq(
   "junit" % "junit" % "4.10" % "test",
-  "org.mockito" % "mockito-all" % "1.9.5-rc1" % "test" withSources,
+  "org.mockito" % "mockito-all" % "1.9.5" % "test" withSources,
   "org.specs2" %% "specs2" % "1.12.3" % "test"
 )
 
