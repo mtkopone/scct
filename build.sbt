@@ -1,12 +1,14 @@
 organization := "reaktor"
 
-name := "scct"
+name := "sbt-scct"
 
 version := "0.3-SNAPSHOT"
 
 scalaVersion := "2.10.0"
 
 crossScalaVersions := Seq("2.10.0")
+
+crossPaths := false
 
 libraryDependencies <+= (scalaVersion) { v =>
   "org.scala-lang" % "scala-compiler" % v % "provided"
