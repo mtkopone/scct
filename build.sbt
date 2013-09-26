@@ -8,7 +8,7 @@ scalaVersion := "2.10.0"
 
 crossScalaVersions := Seq("2.10.0")
 
-crossPaths := false
+sbtPlugin := true
 
 libraryDependencies <+= (scalaVersion) { v =>
   "org.scala-lang" % "scala-compiler" % v % "provided"
