@@ -4,9 +4,9 @@ name := "sbt-scct"
 
 version := "0.2-SNAPSHOT"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.10.0-RC3"
 
-crossScalaVersions := Seq("2.10.0")
+crossScalaVersions := Seq("2.10.0-RC3")
 
 sbtPlugin := true
 
