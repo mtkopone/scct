@@ -3,6 +3,7 @@ package reaktor.scct
 import org.specs2.mutable._
 import org.specs2.mock._
 import tools.nsc.Global
+import java.io.File
 
 class ScctInstrumentPluginSpec extends Specification with Mockito {
   val sut = new ScctInstrumentPlugin(smartMock[Global])
@@ -29,10 +30,9 @@ class ScctInstrumentPluginSpec extends Specification with Mockito {
       sut.options.baseDir.getName must not be empty
     }
     "be settable" in {
-      sut.processOptions(List("basedir:/base/dir", "projectId:myProject", "excludePackages:myRegex,yourRegex"), s => ())
+      sut.processOptions(List("basedir:/base/dir", "projectId:myProject"), s => ())
       sut.options.projectId mustEqual "myProject"
       sut.options.baseDir.getAbsolutePath mustEqual "/base/dir"
-      sut.options.excludePackages mustEqual Array("myRegex".r, "yourRegex".r)
     }
     "report error" in {
       var err = ""

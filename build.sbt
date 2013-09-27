@@ -2,7 +2,7 @@ organization := "reaktor"
 
 name := "sbt-scct"
 
-version := "0.3-SNAPSHOT"
+version := "0.2-SNAPSHOT"
 
 scalaVersion := "2.10.0"
 

@@ -4,9 +4,8 @@ import tools.nsc.plugins.{PluginComponent, Plugin}
 import java.io.File
 import tools.nsc.transform.{Transform, TypingTransformers}
 import tools.nsc.symtab.Flags
-import tools.nsc.Global
+import tools.nsc.{Phase, Global}
 import util.Random
-import scala.util.matching.Regex
 
 class ScctInstrumentPlugin(val global: Global) extends Plugin {
   val name = "scct"
@@ -20,20 +19,18 @@ class ScctInstrumentPlugin(val global: Global) extends Plugin {
         options.projectId = opt.substring("projectId:".length)
       } else if (opt.startsWith("basedir:")) {
         options.baseDir = new File(opt.substring("basedir:".length))
-      } else if (opt.startsWith("excludePackages:")) {
-        options.excludePackages  = opt.substring("excludePackages:".length).split(",").filter(_.length > 0).map(_.r)
       } else {
         error("Unknown option: "+opt)
       }
     }
   }
   override val optionsHelp: Option[String] = Some(
-    "  -P:scct:projectId:<name>                 identify compiled classes under project <name>\n" +
-    "  -P:scct:basedir:<dir>                    set the root dir of the project being compiled\n"
+    "  -P:scct:projectId:<name>          identify compiled classes under project <name>\n" +
+    "  -P:scct:basedir:<dir>             set the root dir of the project being compiled"
   )
 }
 
-class ScctInstrumentPluginOptions(val compilationId:String, var projectId:String, var baseDir:File, var excludePackages: Array[Regex] = Array()) {
+class ScctInstrumentPluginOptions(val compilationId:String, var projectId:String, var baseDir:File) {
   def this() = this(System.currentTimeMillis.toString + Random.nextLong().toString, ScctInstrumentPluginOptions.defaultProjectName, ScctInstrumentPluginOptions.defaultBasedir)
 }
 
@@ -48,14 +45,13 @@ object ScctInstrumentPluginOptions {
 
 class ScctTransformComponent(val global: Global, val opts:ScctInstrumentPluginOptions) extends PluginComponent with TypingTransformers with Transform {
   import global._
+  import global.definitions._
 
   val runsAfter = List[String]("typer")
   override val runsBefore = List[String]("patmat")
 
   val phaseName = "scctInstrumentation"
   def newTransformer(unit: CompilationUnit) = new Instrumenter(unit)
-
-  val filter = new CoverageFilter(opts.excludePackages)
 
   var debug = System.getProperty("scct.debug") == "true"
   var saveData = true
@@ -74,15 +70,11 @@ class ScctTransformComponent(val global: Global, val opts:ScctInstrumentPluginOp
       super.run
       saveMetadata
     }
-
-
     private def saveMetadata {
       if (saveData) {
-        val filtered = filter.filter(data)
-
         println("scct: [" + opts.projectId + "] Saving coverage data.")
         if (coverageFile.exists) coverageFile.delete
-        MetadataPickler.toFile(filtered, coverageFile)
+        MetadataPickler.toFile(data, coverageFile)
       }
     }
   }
