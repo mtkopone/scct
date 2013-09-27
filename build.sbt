@@ -1,6 +1,6 @@
 organization := "reaktor"
 
-name := "scct"
+name := "sbt-scct"
 
 version := "0.2-SNAPSHOT"
 
@@ -8,13 +8,15 @@ scalaVersion := "2.10.0-RC3"
 
 crossScalaVersions := Seq("2.10.0-RC3")
 
+sbtPlugin := true
+
 libraryDependencies <+= (scalaVersion) { v =>
   "org.scala-lang" % "scala-compiler" % v % "provided"
 }
 
 libraryDependencies ++= Seq(
   "junit" % "junit" % "4.10" % "test",
-  "org.mockito" % "mockito-all" % "1.9.5-rc1" % "test" withSources,
+  "org.mockito" % "mockito-all" % "1.9.5" % "test",
   "org.specs2" %% "specs2" % "1.12.3" % "test"
 )
 
